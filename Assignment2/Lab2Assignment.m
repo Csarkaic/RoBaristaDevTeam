@@ -1,4 +1,6 @@
 %% Lab Assignment 2 - RoBarista
+
+Kuka
 %% Initialise and load the environment and safety features
 % Clear and close all previous and current figures, variables, and the
 % command window
@@ -18,7 +20,7 @@ surf([-4,-4;4,4],[-4,4;-4,4],[-1.49,-1.49;-1.49,-1.49],'CData',...
 % added tablePosition offset
 [f,v,data] = plyread('cameron_table.ply', 'tri');
 
-vertexColoursTable = [data.vertex.red, data.vertex.green, data.vertex.blue]/255; % Colour scaling
+vertexColoursTable = [dap1Star = [662 362]; p2Star=[362 362]; p3Star=[362 662]; p4Star = [662 662];ta.vertex.red, data.vertex.green, data.vertex.blue]/255; % Colour scaling
 tablePosition = [-1.5,1.5,-1.64];
 table = trisurf(f, v(:,1) + tablePosition(1,1), v(:,2) + tablePosition(1,2), v(:,3) + tablePosition(1,3) ...
     ,'FaceVertexCData', vertexColoursTable, 'EdgeColor', 'interp', 'EdgeLighting', 'flat');
