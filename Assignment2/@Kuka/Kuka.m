@@ -49,7 +49,7 @@ classdef Kuka < handle
   
     
             self.model = SerialLink(L,'name',name);
-            self.model.base = self.model.base;
+            self.model.base = self.model.base*transl(0,0.5,0);
         end
 
         %% PlotAndColourRobot
