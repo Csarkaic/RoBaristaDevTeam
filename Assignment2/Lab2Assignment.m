@@ -13,13 +13,13 @@ hold on
 
 centerPoint = [0,0,0];
 radii = [0.1,0.1,0.2];
-[X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
-for i = 1:6
-    kuka.model.points{i} = [X(:),Y(:),Z(:)];
-    warning off
-    kuka.model.faces{i} = delaunay(kuka.model.points{i});     
-    warning on;
-end
+% [X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
+% for i = 1:6
+%     kuka.model.points{i} = [X(:),Y(:),Z(:)];
+%     warning off
+%     kuka.model.faces{i} = delaunay(kuka.model.points{i});     
+%     warning on;
+% end
 
 kuka.model.plot3d([0,0,0,0,0,0,0]);
 axis equal
