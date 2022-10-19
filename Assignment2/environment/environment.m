@@ -2,10 +2,10 @@ close all;
 
 hold on;
 
-Kuka
+Kukbot = Kuka;
 dobot = DobotBarista;
-dobot.model.base = eye(4) * transl(-0.6,0.6,0.55);
-dobot.model.animate(dobot.model.base);
+
+% dobot.model.animate(dobot.model.base);
   
 
 surf([-2.5,-2.5;2.5,2.5],[-1,2.5;-1,2.5],[0,0;0,0]...
@@ -29,7 +29,7 @@ surf([-2.5,2.5;-2.5,2.5],[-1,-1;-1,-1],[0,0;1.5,1.5]...
  %Set the color variables for object file 
  vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
  %set the location into the workspace using [x,y,z coordinates]
- location_FINALtable = [0,0.5,0];
+ location_FINALtable = [0,0.8,0];
  %load the table through trisurf(triangular surface) reading and location 
  FINALtable = trisurf(f, v(:,1)+location_FINALtable(1,1),v(:,2)+location_FINALtable(1,2),...
     v(:,3)+location_FINALtable(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
@@ -49,7 +49,7 @@ surf([-2.5,2.5;-2.5,2.5],[-1,-1;-1,-1],[0,0;1.5,1.5]...
  %Set the color variables for object file 
  vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
  %set the location into the workspace using [x,y,z coordinates]
- location_FINALgrinder = [0.3,-0.8,0.55];
+ location_FINALgrinder = [-0.9,1.2,0.55];
  %load the table through trisurf(triangular surface) reading and location 
  FINALgrinder = trisurf(f, v(:,1)+location_FINALgrinder(1,1),v(:,2)+location_FINALgrinder(1,2),...
     v(:,3)+location_FINALgrinder(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
@@ -59,7 +59,7 @@ surf([-2.5,2.5;-2.5,2.5],[-1,-1;-1,-1],[0,0;1.5,1.5]...
  %Set the color variables for object file 
  vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
  %set the location into the workspace using [x,y,z coordinates]
- location_FINALtamper = [0,-0.6,0.55];
+ location_FINALtamper = [-0.65,1.2,0.55];
  %load the table through trisurf(triangular surface) reading and location 
  FINALtamper = trisurf(f, v(:,1)+location_FINALtamper(1,1),v(:,2)+location_FINALtamper(1,2),...
     v(:,3)+location_FINALtamper(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
@@ -69,8 +69,18 @@ surf([-2.5,2.5;-2.5,2.5],[-1,-1;-1,-1],[0,0;1.5,1.5]...
  %Set the color variables for object file 
  vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
  %set the location into the workspace using [x,y,z coordinates]
- location_FINALtamper = [0.75,0.6,0.55];
+ location_FINALtamper = [0.75,0.9,0.55];
  %load the table through trisurf(triangular surface) reading and location 
  FINALfridge = trisurf(f, v(:,1)+location_FINALtamper(1,1),v(:,2)+location_FINALtamper(1,2),...
     v(:,3)+location_FINALtamper(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+    'EdgeLighting','flat');
+
+[f,v,data] = plyread('FINALshelf.ply', 'tri'); 
+ %Set the color variables for object file 
+ vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+ %set the location into the workspace using [x,y,z coordinates]
+ location_FINALshelf = [1,-0.8,0.55];
+ %load the table through trisurf(triangular surface) reading and location 
+ FINALshelf = trisurf(f, v(:,1)+location_FINALshelf(1,1),v(:,2)+location_FINALshelf(1,2),...
+    v(:,3)+location_FINALshelf(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
     'EdgeLighting','flat');
