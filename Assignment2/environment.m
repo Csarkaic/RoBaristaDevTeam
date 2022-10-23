@@ -8,6 +8,7 @@ classdef environment
             
             Kukbot = Kuka;
             dobot = DobotBarista;
+            
             q = dobot.model.getpos;
             f = dobot.model.fkine(q);
             f = f * transl(0,0,0.3);
