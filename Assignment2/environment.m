@@ -167,25 +167,21 @@ classdef environment < handle
     
     methods (Static)
         function DobotSlider(n, value)
-            if matlab.ui.control.StateButton==0
-                q = value;
-                dobot = DobotBarista;
-                currentQ = dobot.model.getpos();
-                currentQ(1,n) = deg2rad(q);
-                dobot.model.animate(currentQ);
-                drawnow();
-            end
+            q = value;
+            dobot = DobotBarista;
+            currentQ = dobot.model.getpos();
+            currentQ(1,n) = deg2rad(q);
+            dobot.model.animate(currentQ);
+            drawnow();
         end
         
          function KukaSlider(n, value)
-             if matlab.ui.control.StateButton==0
-                 q = value;
-                 kukBot = Kuka;
-                 currentQ = kukBot.model.getpos();
-                 currentQ(1,n) = deg2rad(q);
-                 kukBot.model.animate(currentQ);
-                 drawnow();
-             end
+            q = value;
+            kukBot = Kuka;
+            currentQ = kukBot.model.getpos();
+            currentQ(1,n) = deg2rad(q);
+            kukBot.model.animate(currentQ);
+            drawnow();
          end
          
          function doBotEndEffector(x, y, z)
@@ -200,21 +196,13 @@ classdef environment < handle
              qMatrix = zeros(steps,5);
              trajectory = lspb(0,1,steps);
              for i = 1:steps
-                 if matlab.ui.control.StateButton==0
-                     qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
-                 end
+                 qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
              end
              
              for i = 1:steps
-                 if matlab.ui.control.StateButton==0
-                     newQ = dobot.model.getpos();
-                     q2 = newQ(2);
-                     q3 = newQ(3);
-                     q4 = pi/2 - q2 - q3;
-                     qMatrix(i,4) = q4;
-                     dobot.model.animate(qMatrix(i,:));
-                     drawnow();
-                 end
+                 newQ = dobot.model.getpos();
+                 dobot.model.animate(newQ(i,:));
+                 drawnow();                 
              end
          end
          
@@ -225,29 +213,30 @@ classdef environment < handle
              % get starting q value of Kuka Robot
              startQ = kukBot.model.getpos();
              % using trapezoidal trajectory
-             steps = 50;
+             steps = 100;
              endQ = kukBot.model.ikcon(T,[0 pi/4 pi/2 pi/4 pi/2 pi/2 0]);
              qMatrix = zeros(steps,7);
              trajectory = lspb(0,1,steps);
              for i = 1:steps
-                 if matlab.ui.control.StateButton==0
-                     qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
-                 end
+                 qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
              end
              
              for i = 1:steps
-                 if matlab.ui.control.StateButton==0
-                     newQ = kukBot.model.getpos();
-                     q2 = newQ(2);
-                     q3 = newQ(3);
-                     q4 = newQ(4);
-                     q5 = newQ(5);
-                     q6 = pi/2 - q2 - q3 - q4 - q5;
-                     qMatrix(i,6) = q6;
-                     kukBot.model.animate(qMatrix(i,:));
-                     drawnow();
-                 end
+                 newQ = kukBot.model.getpos();
+                 q1 = newQ(1);
+                 q2 = newQ(2);
+                 q3 = newQ(3);
+                 q4 = newQ(4);
+                 q5 = newQ(5);
+                 q6 = q1 - q2 - q3 - q4 - q5;
+                 qMatrix(i,6) = q6;
+                 kukBot.model.animate(qMatrix(i,:));
+                 drawnow();
              end
+             
+         end
+         
+         function kukaDance()
              
          end
         
