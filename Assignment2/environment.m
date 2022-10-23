@@ -6,6 +6,16 @@ classdef environment
     methods (Static)
         function spawnEnvironment
             hold on;            
+
+            Kukbot = Kuka;
+            dobot = DobotBarista;
+            
+            q = dobot.model.getpos;
+            f = dobot.model.fkine(q);
+            f = f * transl(0,0,0.3);
+            i = dobot.model.ikcon(f,[q]);
+            dobot.model.animate(i);
+
             % dobot.model.animate(dobot.model.base);
             
             
