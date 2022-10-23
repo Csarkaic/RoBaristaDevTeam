@@ -30,6 +30,28 @@ classdef Kuka < handle
             pause(0.001);
             name = ['Kuka_',datestr(now,'yyyymmddTHHMMSSFFF')];
             
+<<<<<<< HEAD
+            L(1) = Link([0     0.157    0      0     0]);           
+            L(2) = Link([0     0.116    0      0     0]);
+            L(3) = Link([0     0.269    0      0     0]);
+            L(4) = Link([0     0.132    0      0     0]);
+            L(5) = Link([0     0.269    0      0     0]);
+            L(6) = Link([0     0.148    0      0     0]);
+            L(7) = Link([0     0.133    0      0     0]);
+     
+
+    L(1).qlim = [-170 170]*pi/180;
+    L(2).qlim = [-120 120]*pi/180;
+    L(3).qlim = [-170 170]*pi/180;
+    L(4).qlim = [-120 120]*pi/180;
+    L(5).qlim = [-170 170]*pi/180;
+    L(6).qlim = [-120 120]*pi/180;
+    L(7).qlim = [-175 175]*pi/180;
+  
+    
+            self.model = SerialLink(L,'name',name);
+            self.model.base = self.model.base*transl(-0.5,0.4,0);
+=======
             L1 = Link('d',0.34,'a',0,'alpha',-pi/2,'qlim',deg2rad([-170 170]), 'offset',0);
             L2 = Link('d',0,'a',0,'alpha',pi/2,'qlim', deg2rad([-120 120]), 'offset',0);
             L3 = Link('d',0.4,'a',0,'alpha',-pi/2,'qlim', deg2rad([-170 170]), 'offset', 0);
@@ -39,6 +61,7 @@ classdef Kuka < handle
             L7 = Link('d',0.08,'a',0,'alpha',0,'qlim',deg2rad([-175 175]), 'offset', 0); 
             self.model = SerialLink([L1 L2 L3 L4 L5 L6 L7],'name',name);
             self.model.base = self.model.base*transl(0,-0.55,0);
+>>>>>>> 2643fc17f343892c63768387c24a4e2998644e72
         end
 
         %% PlotAndColourRobot
