@@ -1,14 +1,11 @@
 classdef environment
     properties
+        
     end
     
     methods (Static)
         function spawnEnvironment
-            hold on;
-            
-            Kukbot = Kuka;
-            dobot = DobotBarista;
-            
+            hold on;            
             % dobot.model.animate(dobot.model.base);
             
             
@@ -88,17 +85,17 @@ classdef environment
             FINALshelf = trisurf(f, v(:,1)+location_FINALshelf(1,1),v(:,2)+location_FINALshelf(1,2),...
                 v(:,3)+location_FINALshelf(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
-
-            [f,v,data] = plyread('fireextinguisher.ply', 'tri'); 
-            %Set the color variables for object file 
+            
+            [f,v,data] = plyread('fireextinguisher.ply', 'tri');
+            %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
             location_fireextinguisher = [1.5,1,0];
-            %load the table through trisurf(triangular surface) reading and location 
+            %load the table through trisurf(triangular surface) reading and location
             fireextinguisher = trisurf(f, v(:,1)+location_fireextinguisher(1,1),v(:,2)+location_fireextinguisher(1,2),...
-               v(:,3)+location_fireextinguisher(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
-               'EdgeLighting','flat');
-
+                v(:,3)+location_fireextinguisher(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                'EdgeLighting','flat');
+            
         end
         
         
