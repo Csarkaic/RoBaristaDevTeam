@@ -1,61 +1,4 @@
 %% Lab Assignment 2 - RoBarista
-
-%% Initialise and load the environment and safety features
-% Clear and close all previous and current figures, variables, and the
-% command window
-close all
-clear all
-clc
-clf
-
-hold on
-
-% Plot surface
-% surf([-4,-4;4,4],[-4,4;-4,4],[-1.49,-1.49;-1.49,-1.49],'CData',...
-   % imread('!!!!!!.jpg'),'FaceColor','texturemap');
-
-% Read vertex and function data of estop ply file and plot with trisurf with
-% added eStopPosition offset
-[f,v,data] = plyread('estop.ply', 'tri');
-
-vertexColoursEStop = [data.vertex.red, data.vertex.green, data.vertex.blue]/255; % Colour scaling
-eStopPosition = [3,-3.9,1];
-estop = trisurf(f, v(:,1) + eStopPosition(1,1), v(:,2) + eStopPosition(1,2), v(:,3) + eStopPosition(1,3) ...
-    ,'FaceVertexCData', vertexColoursEStop, 'EdgeColor', 'interp', 'EdgeLighting', 'flat');
-
-% Read vertex and function data of fire extinguisher ply file and plot with trisurf with
-% added fireExPosition offset
-[f,v,data] = plyread('fireextinguisher.ply', 'tri');
-
-vertexColoursFireEx = [data.vertex.red, data.vertex.green, data.vertex.blue]/255; % Colour scaling
-fireExPosition = [3,-3.8,-1];
-FireEx = trisurf(f, v(:,1) + fireExPosition(1,1), v(:,2) + fireExPosition(1,2), v(:,3) + fireExPosition(1,3) ...
-    ,'FaceVertexCData', vertexColoursFireEx, 'EdgeColor', 'interp', 'EdgeLighting', 'flat');
-
-% Read vertex and function data of first aid kit ply file and plot with trisurf with
-% added firstAidPosition offset
-[f,v,data] = plyread('verbandtrommel.ply', 'tri');
-
-vertexColoursFirstAid = [data.vertex.red, data.vertex.green, data.vertex.blue]/255; % Colour scaling
-firstAidPosition = [2,-4,0.25];
-firstAid = trisurf(f, v(:,1) + firstAidPosition(1,1), v(:,2) + firstAidPosition(1,2), v(:,3) + firstAidPosition(1,3) ...
-    ,'FaceVertexCData', vertexColoursFirstAid, 'EdgeColor', 'interp', 'EdgeLighting', 'flat');
-
-
-% Initialise 9 bricks in the workspace at different positions on the XY plane
-totalBricks = Bricks(9);
-
-% Assign the bricks positions within range of the LinearUR3 on either side
-% of it
-totalBricks.brick{1}.base = eye(4)*transl(0.52, 0.5, 0);
-
-
-% Update the bricks in the workspace to visually be present at above
-% positions
-totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
-
-
-%% Kuka joint ellipsoids
 clear all
 close all
 clc
@@ -63,10 +6,12 @@ clf
 
 kuka = Kuka;
 
+%% Kuka joint ellipsoids
+
 centerPoint = [0,0,0];
 radii = [0.1,0.1,0.2];
 [X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
-for i = 1:6
+for i = 1:7
     kuka.model.points{i} = [X(:),Y(:),Z(:)];
     warning off
     kuka.model.faces{i} = delaunay(kuka.model.points{i});     
@@ -76,30 +21,69 @@ end
 %kuka.model.plot3d([0,0,0,0,0,0,0]);
 axis equal
 
+%% COllision Detection
+%% Question 2: Ellipsoid and Point collision checking
+% 2.1
+clf;
+centerPoint = [0,0,0];
+radii = [3,2,1];
+[X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
+view(3);
+hold on;
+
+% 2.2
+ellipsoidAtOrigin_h = surf(X,Y,Z);
+% Make the ellipsoid translucent (so we can see the inside and outside points)
+alpha(0.1);
+
+% 2.3
+% One side of the cube
+[Y,Z] = meshgrid(-0.75:0.05:0.75,-0.75:0.05:0.75);
+sizeMat = size(Y);
+X = repmat(0.75,sizeMat(1),sizeMat(2));
+oneSideOfCube_h = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+cubePoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+cubePoints = [ cubePoints ...
+             ; cubePoints * rotz(pi/2)...
+             ; cubePoints * rotz(pi) ...
+             ; cubePoints * rotz(3*pi/2) ...
+             ; cubePoints * roty(pi/2) ...
+             ; cubePoints * roty(-pi/2)];         
+         
+% Plot the cube's point cloud         
+cubeAtOigin_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'r.');
+cubePoints = cubePoints + repmat([2,0,-0.5],size(cubePoints,1),1);
+%cube_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'b.');
+axis equal
+
+
 %% Workspace Volume Calculation
 
 % Point Cloud variables and parameteres initialised
 steps = deg2rad(60);
-rail_offset = 0.5;
-qlim = LinUr3.model.qlim;
+qlim = kuka.model.qlim;
 
 % calculate point cloud size based range of qlims for each joint and
 % generate a point cloud of zeros that is size appropriate
-pointCloudeSize1 = prod(floor((qlim(1:8,2)-qlim(1:8,1))/steps + 1)); 
+pointCloudeSize1 = prod(floor((qlim(1:7,2)-qlim(1:7,1))/steps + 1)); 
 pointCloud1 = zeros(pointCloudeSize1,3);
 counter = 1; % Used to keep track of progress
 tic % elapsed time for finding the workspace point cloud
 
-for q1 = qlim(1,1):rail_offset:qlim(1,2)  % increment throught the joint limits of all joints
+for q1 = qlim(1,1):steps:qlim(1,2)  % increment throught the joint limits of all joints
     for q2 = qlim(2,1):steps:qlim(2,2)
         for q3 = qlim(3,1):steps:qlim(3,2)
             for q4 = qlim(4,1):steps:qlim(4,2)
                 for q5 = qlim(5,1):steps:qlim(5,2)
                     for q6 = qlim(6,1):steps:qlim(6,2)
                         for q7 = qlim(7,1):steps:qlim(7,2)
-                            q8=0; % last joint not relevant to the point cloud
-                            q = [q1,q2,q3,q4,q5,q6,q7,q8];
-                            tr1 = LinUr3.model.fkine(q); % find end-effector pose
+                            % last joint not relevant to the point cloud
+                            q = [q1,q2,q3,q4,q5,q6,q7];
+                            tr1 = kuka.model.fkine(q); % find end-effector pose
                             pointCloud1(counter,:) = tr1(1:3,4)'; % assign the x,y,z of each point to pointCloud1 
                             counter = counter + 1;
                             if mod(counter/pointCloudeSize1 * 100,1) == 0 
@@ -113,7 +97,6 @@ for q1 = qlim(1,1):rail_offset:qlim(1,2)  % increment throught the joint limits 
         end
     end
 end
-
 % 2.6 Plot3D model showing where the end effector can be over all points in the robot workspace.
 plot3(pointCloud1(:,1),pointCloud1(:,2),pointCloud1(:,3),'r.');
 
