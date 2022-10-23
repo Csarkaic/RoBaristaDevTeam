@@ -214,7 +214,7 @@ classdef environment < handle
              startQ = kukBot.model.getpos();
              % using trapezoidal trajectory
              steps = 100;
-             endQ = kukBot.model.ikcon(T,[0 pi/4 pi/2 pi/4 pi/2 pi/2 0]);
+             endQ = kukBot.model.ikcon(T,[0 pi/4 pi/6 pi/6 pi/4 pi/2 0]);
              qMatrix = zeros(steps,7);
              trajectory = lspb(0,1,steps);
              for i = 1:steps
@@ -233,7 +233,6 @@ classdef environment < handle
                  kukBot.model.animate(qMatrix(i,:));
                  drawnow();
              end
-             
          end
          
          function kukaDance()
