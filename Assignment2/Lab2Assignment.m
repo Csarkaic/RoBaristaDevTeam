@@ -6,6 +6,7 @@ clf
 
 kuka = Kuka;
 
+%% Projectile test and collision check (Light Curtain)
 % Spawn and set base position of foreign object (cup)
 totalCups = Cups(1);
 totalCups.cup{1}.base = eye(4)*transl(-1,0,1);
@@ -283,7 +284,7 @@ backCPoints = backCPoints + repmat([0,-2,-1.3],size(backCPoints,1),1);
 kukaPose = kuka.model.getpos;
 tr = kuka.model.fkine(kukaPose);
 
-% Concatenate all points into 1 array
+% Concatenate all environment points into 1 array
 allPoints = [backCPoints;
     coffeeDPoints;
     coffeeGrPoints;
@@ -301,7 +302,7 @@ algebraicDist = GetAlgebraicDist(allPointsUpdated, centerPoint, radii);
 pointsInside = find(algebraicDist < 0.05);
 display(['There are now ', num2str(size(pointsInside,1)),' points inside']);
 
-% 2.10
+
 q = [0,0,0,0,0,0,0]
 tr = zeros(4,4,kuka.model.n+1);
 tr(:,:,1) = kuka.model.base;
