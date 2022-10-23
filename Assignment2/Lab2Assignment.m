@@ -330,6 +330,11 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
+
+pf = Portafilters(1);
+
+pf.portafilter{1}.base = eye(4)*transl(-0.7,-0.4, 0.8);
+
 qToBrick1 = LinUr3.model.ikcon(totalBricks.brick{1}.base*transl(0,0,0.3)*trotx(pi));
 qToBrick2 = LinUr3.model.ikcon(totalBricks.brick{2}.base*transl(0,0,0.3)*trotx(pi));
 
