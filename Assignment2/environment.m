@@ -109,7 +109,7 @@ classdef environment < handle
             %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
-            location_estop = [-2.4,-0.99,0.75];
+            location_estop = [-2.3,-0.99,0.75];
             %load the table through trisurf(triangular surface) reading and location
             estop = trisurf(f, v(:,1)+location_estop(1,1),v(:,2)+location_estop(1,2),...
                 v(:,3)+location_estop(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
@@ -133,6 +133,16 @@ classdef environment < handle
             %load the table through trisurf(triangular surface) reading and location
             lightcurtain_front = trisurf(f, v(:,1)+location_lightcurtain_front(1,1),v(:,2)+location_lightcurtain_front(1,2),...
                 v(:,3)+location_lightcurtain_front(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                'EdgeLighting','flat');
+
+            [f,v,data] = plyread('fencing.ply', 'tri');
+            %Set the color variables for object file
+            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+            %set the location into the workspace using [x,y,z coordinates]
+            location_fencing = [-1.6,1.2,0];
+            %load the table through trisurf(triangular surface) reading and location
+            fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
+                v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
         end
         
