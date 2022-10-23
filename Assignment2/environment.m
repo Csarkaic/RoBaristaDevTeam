@@ -1,4 +1,4 @@
-classdef environment
+classdef environment < handle
     properties
         
     end
@@ -99,10 +99,20 @@ classdef environment
             %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
-            location_fireextinguisher = [1.5,1,0];
+            location_fireextinguisher = [-2.3,-0.95,0];
             %load the table through trisurf(triangular surface) reading and location
             fireextinguisher = trisurf(f, v(:,1)+location_fireextinguisher(1,1),v(:,2)+location_fireextinguisher(1,2),...
                 v(:,3)+location_fireextinguisher(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                'EdgeLighting','flat');
+
+            [f,v,data] = plyread('estop.ply', 'tri');
+            %Set the color variables for object file
+            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+            %set the location into the workspace using [x,y,z coordinates]
+            location_estop = [-2.4,-0.99,0.75];
+            %load the table through trisurf(triangular surface) reading and location
+            estop = trisurf(f, v(:,1)+location_estop(1,1),v(:,2)+location_estop(1,2),...
+                v(:,3)+location_estop(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
             
             [f,v,data] = plyread('lightcurtain_back.ply', 'tri');
