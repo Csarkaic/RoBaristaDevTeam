@@ -21,7 +21,6 @@ end
 %kuka.model.plot3d([0,0,0,0,0,0,0]);
 axis equal
 
-%% Question 2: Ellipsoid and Point collision checking
 %% Load in collision environment point cloud
 % Coffee grinder
 centerPoint = [0,0,0];
