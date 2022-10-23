@@ -356,7 +356,7 @@ for q1 = qlim(1,1):steps:qlim(1,2)  % increment throught the joint limits of all
         end
     end
 end
-% 2.6 Plot3D model showing where the end effector can be over all points in the robot workspace.
+% Plot3D model showing where the end effector can be over all points in the robot workspace.
 plot3(pointCloud1(:,1),pointCloud1(:,2),pointCloud1(:,3),'r.');
 
 % Calculate the volume of the robot workspace
@@ -425,35 +425,42 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
-qToBrick1 = LinUr3.model.ikcon(totalBricks.brick{1}.base*transl(0,0,0.3)*trotx(pi));
-qToBrick2 = LinUr3.model.ikcon(totalBricks.brick{2}.base*transl(0,0,0.3)*trotx(pi));
+
+pf = Portafilters(1);
+
+pf.portafilter{1}.base = eye(4)*transl(-0.7, -0.3, 0.8);
+portP1 = pf.portafilters{1}.base; 
+pf.portafilters{1}.animate(portP1);
+
+qToBrick1 = kuka.model.ikcon(totalBricks.brick{1}.base*transl(0,0,0.3)*trotx(pi));
+qToBrick2 = kuka.model.ikcon(totalBricks.brick{2}.base*transl(0,0,0.3)*trotx(pi));
 
 
 % calculate the corresponding the poses of each brick
-poseToBrick1 = LinUr3.model.fkine(qToBrick1);
-poseToBrick2 = LinUr3.model.fkine(qToBrick2);
+poseToBrick1 = kuka.model.fkine(qToBrick1);
+poseToBrick2 = kuka.model.fkine(qToBrick2);
 
 
 % Find the end-effector joint configuration at initial joint states
-startLinUr3 = LinUr3.model.fkine(zeros(8));
-qStartLinUr3 = LinUr3.model.ikcon(startLinUr3);
+startkuka = kuka.model.fkine(zeros(8));
+qStartkuka = kuka.model.ikcon(startkuka);
 
 steps = 100; % for quintic polynomial method
 
-% Find trajectory of q from starting position to Brick1
-startToB1 = jtraj(qStartLinUr3(1,:),qToBrick1,steps);
+% Find trajectory of q from starting position to Portafilter
+startToB1 = jtraj(qStartkuka(1,:),qToPortafilter,steps);
 
 
 % Animate trajectory of robot from start to Brick1
 for i=1:1:steps
-    LinUr3.model.animate(startToB1(i,:))
+    kuka.model.animate(startToB1(i,:))
     pause(0.01)
 end
 
 % Animate trajectory of robot stacking Brick1
 for i=1:1:steps
-    LinUr3.model.animate(stackB1(i,:))
-    totalBricks.brick{1}.base = LinUr3.model.fkine(...
+    kuka.model.animate(stackB1(i,:))
+    totalBricks.brick{1}.base = kuka.model.fkine(...
         stackB1(i,:))
     totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
     pause(0.01)
