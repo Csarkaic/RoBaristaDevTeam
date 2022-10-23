@@ -3,7 +3,7 @@ classdef DobotBarista < handle
         model;
         dobotPointCloud = [];
         
-        workspace = [-1 1 -1 1 -0.5 1.5];
+        workspace = [-1 1 -1 1 -0.02 1.5];
         defaultQ = [0 pi/4 pi/2 -pi/4 0];
     end
     

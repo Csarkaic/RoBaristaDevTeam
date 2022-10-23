@@ -21,46 +21,211 @@ end
 %kuka.model.plot3d([0,0,0,0,0,0,0]);
 axis equal
 
-%% COllision Detection
 %% Question 2: Ellipsoid and Point collision checking
-% 2.1
-clf;
+%% Load in collision environment point cloud
+% Coffee grinder
 centerPoint = [0,0,0];
-radii = [3,2,1];
-[X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
 view(3);
 hold on;
 
-% 2.2
-ellipsoidAtOrigin_h = surf(X,Y,Z);
-% Make the ellipsoid translucent (so we can see the inside and outside points)
-alpha(0.1);
-
-% 2.3
 % One side of the cube
-[Y,Z] = meshgrid(-0.75:0.05:0.75,-0.75:0.05:0.75);
+[Y,Z] = meshgrid(-0.1:0.05:0.1,-0.1:0.05:0.1);
+
 sizeMat = size(Y);
-X = repmat(0.75,sizeMat(1),sizeMat(2));
-oneSideOfCube_h = surf(X,Y,Z);
+X = repmat(0.1,sizeMat(1),sizeMat(2));
+oneSideOfCoffeeGr = surf(X,Y,Z);
 
 % Combine one surface as a point cloud
-cubePoints = [X(:),Y(:),Z(:)];
+coffeeGrPoints = [X(:),Y(:),Z(:)];
 
 % Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
-cubePoints = [ cubePoints ...
-             ; cubePoints * rotz(pi/2)...
-             ; cubePoints * rotz(pi) ...
-             ; cubePoints * rotz(3*pi/2) ...
-             ; cubePoints * roty(pi/2) ...
-             ; cubePoints * roty(-pi/2)];         
+coffeeGrPoints = [ coffeeGrPoints ...
+             ; coffeeGrPoints * rotz(pi/2)...
+             ; coffeeGrPoints * rotz(pi) ...
+             ; coffeeGrPoints * rotz(3*pi/2) ...
+             ; coffeeGrPoints * roty(pi/2) ...
+             ; coffeeGrPoints * roty(-pi/2)]; 
+         
+try delete(X); end
+try delete(oneSideOfCoffeeGr); end 
          
 % Plot the cube's point cloud         
-cubeAtOigin_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'r.');
-cubePoints = cubePoints + repmat([2,0,-0.5],size(cubePoints,1),1);
-%cube_h = plot3(cubePoints(:,1),cubePoints(:,2),cubePoints(:,3),'b.');
-axis equal
+coffeeGrPoints = coffeeGrPoints + repmat([-0.9,1,0.8],size(coffeeGrPoints,1),1);
 
 
+% Tamper(front)
+[Y,Z] = meshgrid(-0.04:0.05:0.04,-0.04:0.05:0.04);
+
+sizeMat = size(Y);
+X = repmat(0.04,sizeMat(1),sizeMat(2));
+oneSideOfTamperF = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+tamperFPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+tamperFPoints = [ tamperFPoints ...
+             ; tamperFPoints * rotz(pi/2)...
+             ; tamperFPoints * rotz(pi) ...
+             ; tamperFPoints * rotz(3*pi/2) ...
+             ; tamperFPoints * roty(pi/2) ...
+             ; tamperFPoints * roty(-pi/2)];         
+         
+         
+try delete(X); end
+try delete(oneSideOfTamperF); end 
+
+% Plot the cube's point cloud         
+tamperFPoints = tamperFPoints + repmat([-0.64,1.1,0.85],size(tamperFPoints,1),1);
+
+
+% Tamper(back)
+[Y,Z] = meshgrid(-0.1:0.05:0.1,-0.1:0.05:0.1);
+
+sizeMat = size(Y);
+X = repmat(0.1,sizeMat(1),sizeMat(2));
+oneSideOfTamperB = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+tamperBPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+tamperBPoints = [ tamperBPoints ...
+             ; tamperBPoints * rotz(pi/2)...
+             ; tamperBPoints * rotz(pi) ...
+             ; tamperBPoints * rotz(3*pi/2) ...
+             ; tamperBPoints * roty(pi/2) ...
+             ; tamperBPoints * roty(-pi/2)]; 
+         
+try delete(X); end
+try delete(oneSideOfTamperB); end 
+         
+% Plot the cube's point cloud         
+tamperBPoints = tamperBPoints + repmat([-0.64,1.23,0.7],size(tamperBPoints,1),1);
+
+
+% Heated Food Unit
+[Y,Z] = meshgrid(-0.375:0.05:0.375,-0.375:0.05:0.375);
+
+sizeMat = size(Y);
+X = repmat(0.375,sizeMat(1),sizeMat(2));
+oneSideOfHFPoints = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+heatedFoodPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+heatedFoodPoints = [ heatedFoodPoints ...
+             ; heatedFoodPoints * rotz(pi/2)...
+             ; heatedFoodPoints * rotz(pi) ...
+             ; heatedFoodPoints * rotz(3*pi/2) ...
+             ; heatedFoodPoints * roty(pi/2) ...
+             ; heatedFoodPoints * roty(-pi/2)];  
+
+try delete(X); end
+try delete(oneSideOfHFPoints); end 
+         
+% Plot the cube's point cloud         
+heatedFoodPoints = heatedFoodPoints + repmat([0.75,1.27,0.65],size(heatedFoodPoints,1),1);
+
+
+% Shelf Unit
+[Y,Z] = meshgrid(-0.65:0.05:0.65,-0.65:0.05:0.65);
+
+sizeMat = size(Y);
+X = repmat(0.65,sizeMat(1),sizeMat(2));
+oneSideOfShelf = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+shelfPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+shelfPoints = [ shelfPoints ...
+             ; shelfPoints * rotz(pi/2)...
+             ; shelfPoints * rotz(pi) ...
+             ; shelfPoints * rotz(3*pi/2) ...
+             ; shelfPoints * roty(pi/2) ...
+             ; shelfPoints * roty(-pi/2)]; 
+         
+try delete(X); end
+try delete(oneSideOfShelf); end 
+
+% Plot the cube's point cloud         
+shelfPoints = shelfPoints + repmat([1,-1,0.6],size(shelfPoints,1),1);
+
+
+% Front Counter 
+[Y,Z] = meshgrid(-1.4:0.05:1.4,-1.4:0.05:1.4);
+sizeMat = size(Y);
+X = repmat(1.4,sizeMat(1),sizeMat(2));
+oneSideOfFrontC = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+frontCPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+frontCPoints = [ frontCPoints ...
+             ; frontCPoints * rotz(pi/2)...
+             ; frontCPoints * rotz(pi) ...
+             ; frontCPoints * rotz(3*pi/2) ...
+             ; frontCPoints * roty(pi/2) ...
+             ; frontCPoints * roty(-pi/2)];       
+         
+try delete(X); end
+try delete(oneSideOfFrontC); end   
+
+% Plot the cube's point cloud         
+frontCPoints = frontCPoints + repmat([0,2.4,-0.9],size(frontCPoints,1),1);
+
+
+% Coffee Dispenser
+
+[Y,Z] = meshgrid(-0.5:0.05:0.5,-0.5:0.05:0.5);
+sizeMat = size(Y);
+X = repmat(0.5,sizeMat(1),sizeMat(2));
+oneSideOfCoffeeD = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+coffeeDPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+coffeeDPoints = [ coffeeDPoints ...
+             ; coffeeDPoints * rotz(pi/2)...
+             ; coffeeDPoints * rotz(pi) ...
+             ; coffeeDPoints * rotz(3*pi/2) ...
+             ; coffeeDPoints * roty(pi/2) ...
+             ; coffeeDPoints * roty(-pi/2)];         
+         
+try delete(X); end
+try delete(oneSideOfCoffeeD); end   
+
+% Plot the cube's point cloud         
+coffeeDPoints = coffeeDPoints + repmat([-0.7,-0.95,0.7],size(coffeeDPoints,1),1);
+
+% Back Counter
+
+[Y,Z] = meshgrid(-1.8:0.05:1.8,-1.8:0.05:1.8);
+sizeMat = size(Y);
+X = repmat(1.8,sizeMat(1),sizeMat(2));
+oneSideOfBackC = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+backCPoints = [X(:),Y(:),Z(:)];
+
+% Make a cube by rotating the single side by 0,90,180,270, and around y to make the top and bottom faces
+backCPoints = [ backCPoints ...
+             ; backCPoints * rotz(pi/2)...
+             ; backCPoints * rotz(pi) ...
+             ; backCPoints * rotz(3*pi/2) ...
+             ; backCPoints * roty(pi/2) ...
+             ; backCPoints * roty(-pi/2)];         
+ 
+try delete(X); end
+try delete(oneSideOfBackC); end   
+
+% Plot the cube's point cloud         
+backCPoints = backCPoints + repmat([0,-2,-1.3],size(backCPoints,1),1);
+backC_h = plot3(backCPoints(:,1),backCPoints(:,2),backCPoints(:,3),'b.');
 %% Workspace Volume Calculation
 
 % Point Cloud variables and parameteres initialised

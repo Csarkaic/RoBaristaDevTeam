@@ -4,7 +4,7 @@ classdef Kuka < handle
         model;
         
         %> workspace
-        workspace = [-1 1 -1 1 0.1 1.5];   
+        workspace = [-1 1 -1 1 -0.02 1.5];   
       
     end
     
