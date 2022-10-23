@@ -6,11 +6,8 @@ classdef environment < handle
     
     methods (Static)
         function spawnEnvironment
-<<<<<<< HEAD
             hold on;
-=======
-            hold on;            
->>>>>>> facbf0153e541476e6619ad521f2ee3ef4769e01
+
             Kukbot = Kuka;
             dobot = DobotBarista;
             
@@ -171,7 +168,58 @@ classdef environment < handle
             currentQ(1,n) = deg2rad(q);
             kukBot.model.animate(currentQ);
             drawnow();
-        end
+         end
+         
+         function doBotEndEffector(x, y, z)
+             dobot = DobotBarista;
+             % create transform
+             T = transl(x,y,z);
+             % get starting q value of Dobot
+             startQ = dobot.model.getpos();
+             % using trapezoidal trajectory
+             steps = 50;
+             endQ = dobot.model.ikcon(T,[0 pi/4 pi/2 pi/4 0]);
+             qMatrix = zeros(steps,5);
+             trajectory = lspb(0,1,steps);
+             for i = 1:steps
+                 qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
+             end
+             
+             for i = 1:steps
+                 newQ = dobot.model.getpos();
+                 dobot.model.animate(newQ(i,:));
+                 drawnow();                 
+             end
+         end
+         
+         function kukaEndEffector(x, y, z)
+             kukBot = Kuka;
+             % create transform
+             T = transl(x,y,z);
+             % get starting q value of Kuka Robot
+             startQ = kukBot.model.getpos();
+             % using trapezoidal trajectory
+             steps = 50;
+             endQ = kukBot.model.ikcon(T,[0 pi/4 pi/2 pi/4 pi/2 pi/2 0]);
+             qMatrix = zeros(steps,7);
+             trajectory = lspb(0,1,steps);
+             for i = 1:steps
+                 qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
+             end
+             
+             for i = 1:steps
+                 newQ = kukBot.model.getpos();
+                 q2 = newQ(2);
+                 q3 = newQ(3);
+                 q4 = newQ(4);
+                 q5 = newQ(5);
+                 q6 = pi/2 - q2 - q3 - q4 - q5;
+                 qMatrix(i,6) = q6;
+                 kukBot.model.animate(qMatrix(i,:));
+                 drawnow();
+             end
+             
+         end
         
     end
     
