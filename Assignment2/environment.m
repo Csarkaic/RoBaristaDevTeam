@@ -208,8 +208,12 @@ classdef environment < handle
              for i = 1:steps
                  if matlab.ui.control.StateButton==0
                      newQ = dobot.model.getpos();
-                     dobot.model.animate(newQ(i,:));
-                     drawnow();                 
+                     q2 = newQ(2);
+                     q3 = newQ(3);
+                     q4 = pi/2 - q2 - q3;
+                     qMatrix(i,4) = q4;
+                     dobot.model.animate(qMatrix(i,:));
+                     drawnow();
                  end
              end
          end
