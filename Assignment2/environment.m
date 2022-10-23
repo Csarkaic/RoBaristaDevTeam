@@ -6,7 +6,6 @@ classdef environment
     methods (Static)
         function spawnEnvironment
             hold on;            
-
             Kukbot = Kuka;
             dobot = DobotBarista;
             
