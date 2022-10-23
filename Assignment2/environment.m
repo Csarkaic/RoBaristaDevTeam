@@ -209,7 +209,7 @@ classdef environment < handle
          function kukaEndEffector(x, y, z)
              kukBot = Kuka;
              % create transform
-             T = transl(x,y,z);
+             T = transl(x,y,z)*troty(pi/2);
              % get starting q value of Kuka Robot
              startQ = kukBot.model.getpos();
              % using trapezoidal trajectory
