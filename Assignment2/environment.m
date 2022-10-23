@@ -1,21 +1,21 @@
 classdef environment
     properties
-        
+%         Kukbot = Kuka;
+%         dobot = DobotBarista;
     end
     
     methods (Static)
         function spawnEnvironment
-            hold on;            
-
+            hold on;
             Kukbot = Kuka;
             dobot = DobotBarista;
             
-            q = dobot.model.getpos;
-            f = dobot.model.fkine(q);
-            f = f * transl(0,0,0.3);
-            i = dobot.model.ikcon(f,[q]);
-            dobot.model.animate(i);
-
+            %             q = dobot.model.getpos;
+            %             f = dobot.model.fkine(q);
+            %             f = f * transl(0,0,0.3);
+            %             i = dobot.model.ikcon(f,[q]);
+            %             dobot.model.animate(i);
+            %
             % dobot.model.animate(dobot.model.base);
             
             
@@ -110,4 +110,26 @@ classdef environment
         
         
     end
+    
+    methods (Static)
+        function DobotSlider(n, value)
+            q = value;
+            dobot = DobotBarista;
+            currentQ = dobot.model.getpos();
+            currentQ(1,n) = deg2rad(q);
+            dobot.model.animate(currentQ);
+            drawnow();
+        end
+        
+         function KukaSlider(n, value)
+            q = value;
+            kukBot = Kuka;
+            currentQ = kukBot.model.getpos();
+            currentQ(1,n) = deg2rad(q);
+            kukBot.model.animate(currentQ);
+            drawnow();
+        end
+        
+    end
+    
 end
