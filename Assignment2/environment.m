@@ -1,20 +1,22 @@
-classdef environment
+classdef environment < handle
     properties
-        
+%         Kukbot = Kuka;
+%         dobot = DobotBarista;
     end
     
     methods (Static)
         function spawnEnvironment
-            hold on;            
+            hold on;
+
             Kukbot = Kuka;
             dobot = DobotBarista;
             
-            q = dobot.model.getpos;
-            f = dobot.model.fkine(q);
-            f = f * transl(0,0,0.3);
-            i = dobot.model.ikcon(f,[q]);
-            dobot.model.animate(i);
-
+            %             q = dobot.model.getpos;
+            %             f = dobot.model.fkine(q);
+            %             f = f * transl(0,0,0.3);
+            %             i = dobot.model.ikcon(f,[q]);
+            %             dobot.model.animate(i);
+            %
             % dobot.model.animate(dobot.model.base);
             
             
@@ -99,10 +101,20 @@ classdef environment
             %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
-            location_fireextinguisher = [1.5,1,0];
+            location_fireextinguisher = [-2.3,-0.95,0];
             %load the table through trisurf(triangular surface) reading and location
             fireextinguisher = trisurf(f, v(:,1)+location_fireextinguisher(1,1),v(:,2)+location_fireextinguisher(1,2),...
                 v(:,3)+location_fireextinguisher(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                'EdgeLighting','flat');
+
+            [f,v,data] = plyread('estop.ply', 'tri');
+            %Set the color variables for object file
+            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+            %set the location into the workspace using [x,y,z coordinates]
+            location_estop = [-2.3,-0.99,0.75];
+            %load the table through trisurf(triangular surface) reading and location
+            estop = trisurf(f, v(:,1)+location_estop(1,1),v(:,2)+location_estop(1,2),...
+                v(:,3)+location_estop(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
             
             [f,v,data] = plyread('lightcurtain_back.ply', 'tri');
@@ -124,8 +136,121 @@ classdef environment
             lightcurtain_front = trisurf(f, v(:,1)+location_lightcurtain_front(1,1),v(:,2)+location_lightcurtain_front(1,2),...
                 v(:,3)+location_lightcurtain_front(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
+
+            [f,v,data] = plyread('fencing.ply', 'tri');
+            %Set the color variables for object file
+            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+            %set the location into the workspace using [x,y,z coordinates]
+            location_fencing = [-1.6,1.2,0];
+            %load the table through trisurf(triangular surface) reading and location
+            fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
+                v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                'EdgeLighting','flat');
+
+            for i = 0.6:0.266:1.4
+                for j = 0.65:0.2:1.25
+                    [f,v,data] = plyread('croissant.ply', 'tri');
+                    %Set the color variables for object file
+                    vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+                    %set the location into the workspace using [x,y,z coordinates]
+                    location_fencing = [i,-0.5,j];
+                    %load the table through trisurf(triangular surface) reading and location
+                    fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
+                        v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+                        'EdgeLighting','flat');
+                end
+            end
         end
         
         
     end
+    
+    methods (Static)
+        function DobotSlider(n, value)
+            if matlab.ui.control.StateButton==0
+                q = value;
+                dobot = DobotBarista;
+                currentQ = dobot.model.getpos();
+                currentQ(1,n) = deg2rad(q);
+                dobot.model.animate(currentQ);
+                drawnow();
+            end
+        end
+        
+         function KukaSlider(n, value)
+             if matlab.ui.control.StateButton==0
+                 q = value;
+                 kukBot = Kuka;
+                 currentQ = kukBot.model.getpos();
+                 currentQ(1,n) = deg2rad(q);
+                 kukBot.model.animate(currentQ);
+                 drawnow();
+             end
+         end
+         
+         function doBotEndEffector(x, y, z)
+             dobot = DobotBarista;
+             % create transform
+             T = transl(x,y,z);
+             % get starting q value of Dobot
+             startQ = dobot.model.getpos();
+             % using trapezoidal trajectory
+             steps = 50;
+             endQ = dobot.model.ikcon(T,[0 pi/4 pi/2 pi/4 0]);
+             qMatrix = zeros(steps,5);
+             trajectory = lspb(0,1,steps);
+             for i = 1:steps
+                 if matlab.ui.control.StateButton==0
+                     qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
+                 end
+             end
+             
+             for i = 1:steps
+                 if matlab.ui.control.StateButton==0
+                     newQ = dobot.model.getpos();
+                     q2 = newQ(2);
+                     q3 = newQ(3);
+                     q4 = pi/2 - q2 - q3;
+                     qMatrix(i,4) = q4;
+                     dobot.model.animate(qMatrix(i,:));
+                     drawnow();
+                 end
+             end
+         end
+         
+         function kukaEndEffector(x, y, z)
+             kukBot = Kuka;
+             % create transform
+             T = transl(x,y,z);
+             % get starting q value of Kuka Robot
+             startQ = kukBot.model.getpos();
+             % using trapezoidal trajectory
+             steps = 50;
+             endQ = kukBot.model.ikcon(T,[0 pi/4 pi/2 pi/4 pi/2 pi/2 0]);
+             qMatrix = zeros(steps,7);
+             trajectory = lspb(0,1,steps);
+             for i = 1:steps
+                 if matlab.ui.control.StateButton==0
+                     qMatrix(i,:) = (1-trajectory(i))*startQ + trajectory(i)*endQ;
+                 end
+             end
+             
+             for i = 1:steps
+                 if matlab.ui.control.StateButton==0
+                     newQ = kukBot.model.getpos();
+                     q2 = newQ(2);
+                     q3 = newQ(3);
+                     q4 = newQ(4);
+                     q5 = newQ(5);
+                     q6 = pi/2 - q2 - q3 - q4 - q5;
+                     qMatrix(i,6) = q6;
+                     kukBot.model.animate(qMatrix(i,:));
+                     drawnow();
+                 end
+             end
+             
+         end
+        
+    end
+    
 end

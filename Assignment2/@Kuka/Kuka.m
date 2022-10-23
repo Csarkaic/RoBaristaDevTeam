@@ -21,14 +21,14 @@ classdef Kuka < handle
             self.GetKukaRobot();
             self.PlotAndColourRobot();%robot,workspace);
 
-            drawnow
+%             drawnow
         end
 
         %% GetKukaRobot
         % Given a name (optional), create and return a Kuka robot model
         function GetKukaRobot(self)
             pause(0.001);
-            name = ['Kuka_',datestr(now,'yyyymmddTHHMMSSFFF')];
+            name = ['Kuka'];
 
             L1 = Link('d',0.34,'a',0,'alpha',-pi/2,'qlim',deg2rad([-170 170]), 'offset',0);
             L2 = Link('d',0,'a',0,'alpha',pi/2,'qlim', deg2rad([-120 120]), 'offset',0);
@@ -59,19 +59,19 @@ classdef Kuka < handle
             self.model.delay = 0;
 
             % Try to correctly colour the arm (if colours are in ply file data)
-            for linkIndex = 0:self.model.n
-                handles = findobj('Tag', self.model.name);
-                h = get(handles,'UserData');
-                try 
-                    h.link(linkIndex+1).Children.FaceVertexCData = [plyData{linkIndex+1}.vertex.red ...
-                                                                  , plyData{linkIndex+1}.vertex.green ...
-                                                                  , plyData{linkIndex+1}.vertex.blue]/255;
-                    h.link(linkIndex+1).Children.FaceColor = 'interp';
-                catch ME_1
-                    disp(ME_1);
-                    continue;
-                end
-            end
+%             for linkIndex = 0:self.model.n
+%                 handles = findobj('Tag', self.model.name);
+%                 h = get(handles,'UserData');
+%                 try 
+%                     h.link(linkIndex+1).Children.FaceVertexCData = [plyData{linkIndex+1}.vertex.red ...
+%                                                                   , plyData{linkIndex+1}.vertex.green ...
+%                                                                   , plyData{linkIndex+1}.vertex.blue]/255;
+%                     h.link(linkIndex+1).Children.FaceColor = 'interp';
+%                 catch ME_1
+%                     disp(ME_1);
+%                     continue;
+%                 end
+%             end
         end        
     end
 end
