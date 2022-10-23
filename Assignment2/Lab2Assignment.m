@@ -8,24 +8,6 @@ clear all
 clc
 clf
 
-kuka = Kuka;
-hold on
-
-centerPoint = [0,0,0];
-radii = [0.1,0.1,0.2];
-% [X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
-% for i = 1:6
-%     kuka.model.points{i} = [X(:),Y(:),Z(:)];
-%     warning off
-%     kuka.model.faces{i} = delaunay(kuka.model.points{i});     
-%     warning on;
-% end
-
-kuka.model.plot3d([0,0,0,0,0,0,0]);
-axis equal
-camlight
-
-%%
 hold on
 
 % Plot surface
@@ -66,32 +48,39 @@ totalBricks = Bricks(9);
 % Assign the bricks positions within range of the LinearUR3 on either side
 % of it
 totalBricks.brick{1}.base = eye(4)*transl(0.52, 0.5, 0);
-totalBricks.brick{2}.base = eye(4)*transl(0.52, 0.7, 0);
-totalBricks.brick{3}.base = eye(4)*transl(0.5, 0.9, 0);
-totalBricks.brick{4}.base = eye(4)*transl(0.5, 1.1, 0);
-totalBricks.brick{5}.base = eye(4)*transl(0.5, 1.3, 0);
-totalBricks.brick{6}.base = eye(4)*transl(-0.3, 0.5, 0);
-totalBricks.brick{7}.base = eye(4)*transl(-0.3, 0.7, 0);
-totalBricks.brick{8}.base = eye(4)*transl(-0.3, 0.9, 0);
-totalBricks.brick{9}.base = eye(4)*transl(-0.32, 1.1, 0);
+
 
 % Update the bricks in the workspace to visually be present at above
 % positions
 totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
-totalBricks.brick{2}.animate(totalBricks.brick{2}.base)
-totalBricks.brick{3}.animate(totalBricks.brick{3}.base)
-totalBricks.brick{4}.animate(totalBricks.brick{4}.base)
-totalBricks.brick{5}.animate(totalBricks.brick{5}.base)
-totalBricks.brick{6}.animate(totalBricks.brick{6}.base)
-totalBricks.brick{7}.animate(totalBricks.brick{7}.base)
-totalBricks.brick{8}.animate(totalBricks.brick{8}.base)
-totalBricks.brick{9}.animate(totalBricks.brick{9}.base)
+
 
 
 hold on
 
 % Load the LinearUR3 into the workspace
-LinUr3 = LinearUR3;
+
+%% Kuka joint ellipsoids
+clear all
+close all
+clc
+clf
+
+kuka = Kuka;
+
+centerPoint = [0,0,0];
+radii = [0.1,0.1,0.2];
+[X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
+for i = 1:6
+    kuka.model.points{i} = [X(:),Y(:),Z(:)];
+    warning off
+    kuka.model.faces{i} = delaunay(kuka.model.points{i});     
+    warning on;
+end
+
+%kuka.model.plot3d([0,0,0,0,0,0,0]);
+axis equal
+
 %% Workspace Volume Calculation
 
 % Point Cloud variables and parameteres initialised

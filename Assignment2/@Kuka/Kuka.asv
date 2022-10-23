@@ -33,7 +33,7 @@ classdef Kuka < handle
             L1 = Link('d',0.34,'a',0,'alpha',-pi/2,'qlim',deg2rad([-170 170]), 'offset',0);
             L2 = Link('d',0,'a',0,'alpha',pi/2,'qlim', deg2rad([-120 120]), 'offset',0);
             L3 = Link('d',0.4,'a',0,'alpha',-pi/2,'qlim', deg2rad([-170 170]), 'offset', 0);
-            L4 = Link('d',0,'a',0,'alpha',-pi/2,'qlim',deg2rad([-120 120]),'offset', pi);
+            L4 = Link('d',0,'a',0.8,'alpha',-pi/2,'qlim',deg2rad([-120 120]),'offset', 0);
             L5 = Link('d',0.39,'a',0,'alpha',-pi/2,'qlim',deg2rad([-170 170]), 'offset',0);
             L6 = Link('d',0,'a',0,'alpha',pi/2,'qlim',deg2rad([-120 120]), 'offset', 0);
             L7 = Link('d',0.08,'a',0,'alpha',0,'qlim',deg2rad([-175 175]), 'offset', 0); 
