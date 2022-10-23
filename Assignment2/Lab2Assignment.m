@@ -6,11 +6,44 @@ clf
 
 kuka = Kuka;
 
+% Spawn and set base position of foreign object (cup)
+totalCups = Cups(1);
+totalCups.cup{1}.base = eye(4)*transl(-1,0,1);
+totalCups.cup{1}.animate(totalCups.cup{1}.base); % update position
+cupQ1 = totalCups.cup{1}.base;
+
+projectileDetected = 0; % light curtain signal indicator
+
+for i=-1:0.05:3
+    
+    cupQ1(1,4) = i;
+    totalCups.cup{1}.base = cupQ1;
+    totalCups.cup{1}.animate(cupQ1);
+    pause(0.01)
+    %         totalCups.cup{1}.base = totalCups.cup{1}.fkine(projectileTraj(j,:));
+    %         totalCups.cup{1}.animate(projectileTraj)
+    
+    if totalCups.cup{1}.base(1,4) >= 2
+        projectileDetected = 1;
+    end
+    
+    if projectileDetected == 1
+        display('Foreign object deteced by light curtain');
+        break
+    end
+    
+end
+  
+    
 %% Kuka joint ellipsoids
 
+% Joint ellipsoid paramters
 centerPoint = [0,0,0];
-radii = [0.1,0.1,0.2];
+radii = [0.1,0.1,0.12];
 [X,Y,Z] = ellipsoid( centerPoint(1), centerPoint(2), centerPoint(3), radii(1), radii(2), radii(3) );
+
+% Increment through each robot joint and create an ellipsoid centred at
+% each joint
 for i = 1:7
     kuka.model.points{i} = [X(:),Y(:),Z(:)];
     warning off
@@ -18,14 +51,34 @@ for i = 1:7
     warning on;
 end
 
-%kuka.model.plot3d([0,0,0,0,0,0,0]);
-axis equal
+% Uncomment below to plot the ellipsoid at each joint
+
+% kuka.model.plot3d([0,0,0,0,0,0,0]);
 
 %% Load in collision environment point cloud
-% Coffee grinder
 centerPoint = [0,0,0];
 view(3);
 hold on;
+
+% Light Curtain
+
+% One side of the cube
+[Y,Z] = meshgrid(-1:0.05:1,-1:0.05:1);
+
+sizeMat = size(Y);
+X = repmat(1,sizeMat(1),sizeMat(2));
+oneSideOfLightCurt = surf(X,Y,Z);
+
+% Combine one surface as a point cloud
+lightCurtPoints = [X(:),Y(:),Z(:)];
+
+try delete(X); end 
+try delete(oneSideOfLightCurt); end 
+         
+% Plot the cube's point cloud         
+lightCurtPoints = lightCurtPoints + repmat([-3,0,0.75],size(lightCurtPoints,1),1);
+
+% Coffee grinder
 
 % One side of the cube
 [Y,Z] = meshgrid(-0.1:0.05:0.1,-0.1:0.05:0.1);
@@ -224,7 +277,48 @@ try delete(oneSideOfBackC); end
 
 % Plot the cube's point cloud         
 backCPoints = backCPoints + repmat([0,-2,-1.3],size(backCPoints,1),1);
-backC_h = plot3(backCPoints(:,1),backCPoints(:,2),backCPoints(:,3),'b.');
+
+%% Collision checking of Kuka wih environment
+
+kukaPose = kuka.model.getpos;
+tr = kuka.model.fkine(kukaPose);
+
+% Concatenate all points into 1 array
+allPoints = [backCPoints;
+    coffeeDPoints;
+    coffeeGrPoints;
+    frontCPoints;
+    heatedFoodPoints;
+    lightCurtPoints;
+    tamperBPoints;
+    tamperFPoints];
+
+% transform the environment points into the local robot coordinate frame
+allPointsAndOnes = [inv(tr) * [allPoints,ones(size(allPoints,1),1)]']';
+
+allPointsUpdated = allPointsAndOnes(:,1:3);
+algebraicDist = GetAlgebraicDist(allPointsUpdated, centerPoint, radii);
+pointsInside = find(algebraicDist < 0.05);
+display(['There are now ', num2str(size(pointsInside,1)),' points inside']);
+
+% 2.10
+q = [0,0,0,0,0,0,0]
+tr = zeros(4,4,kuka.model.n+1);
+tr(:,:,1) = kuka.model.base;
+L = kuka.model.links;
+for i = 1 : kuka.model.n
+    tr(:,:,i+1) = tr(:,:,i) * trotz(q(i)) * transl(0,0,L(i).d) * transl(L(i).a,0,0) * trotx(L(i).alpha);
+end
+
+% Go through each ellipsoid
+for i = 1: size(tr,3)
+    allPointsAndOnes = [inv(tr(:,:,i)) * [allPoints,ones(size(allPoints,1),1)]']';
+    allPointsUpdated = allPointsAndOnes(:,1:3);
+    algebraicDist = GetAlgebraicDist(allPointsUpdated, centerPoint, radii);
+    pointsInside = find(algebraicDist < 0.05);
+    display(['There are ', num2str(size(pointsInside,1)),' points inside the ',num2str(i),'th ellipsoid']);
+end
+
 %% Workspace Volume Calculation
 
 % Point Cloud variables and parameteres initialised
@@ -264,7 +358,7 @@ end
 % 2.6 Plot3D model showing where the end effector can be over all points in the robot workspace.
 plot3(pointCloud1(:,1),pointCloud1(:,2),pointCloud1(:,3),'r.');
 
-%% Calculate the volume of the robot workspace
+% Calculate the volume of the robot workspace
 % Initialise as -100 the maximum values in x,y,z to find the greatest value in
 % pointCloud1
 xMax = -100;
@@ -348,13 +442,6 @@ steps = 100; % for quintic polynomial method
 % Find trajectory of q from starting position to Brick1
 startToB1 = jtraj(qStartLinUr3(1,:),qToBrick1,steps);
 
-% Find the end-effector joint configuration of Brick1 dropoff
-wallPosB1 = eye(4)*transl(-0.1,0.2,0)*trotx(pi)*trotz(pi/2);
-qB1ToWall = LinUr3.model.ikcon(wallPosB1);
-
-% Find trajectory of q from Brick1 to Brick1 dropoff
-stackB1 = jtraj(qToBrick1,qB1ToWall,steps);
-
 
 % Animate trajectory of robot from start to Brick1
 for i=1:1:steps
@@ -371,5 +458,49 @@ for i=1:1:steps
     pause(0.01)
 end
 
+function dist=dist2pts(pt1,pt2)
+
+%% Calculate distance (dist) between consecutive points
+% If 2D
+if size(pt1,2) == 2
+    dist=sqrt((pt1(:,1)-pt2(:,1)).^2+...
+              (pt1(:,2)-pt2(:,2)).^2);
+% If 3D          
+elseif size(pt1,2) == 3
+    dist=sqrt((pt1(:,1)-pt2(:,1)).^2+...
+              (pt1(:,2)-pt2(:,2)).^2+...
+              (pt1(:,3)-pt2(:,3)).^2);
+% If 6D like two poses
+elseif size(pt1,2) == 6
+    dist=sqrt((pt1(:,1)-pt2(:,1)).^2+...
+              (pt1(:,2)-pt2(:,2)).^2+...
+              (pt1(:,3)-pt2(:,3)).^2+...
+              (pt1(:,4)-pt2(:,4)).^2+...
+              (pt1(:,5)-pt2(:,5)).^2+...
+              (pt1(:,6)-pt2(:,6)).^2);
+end
+end
+
+%% GetAlgebraicDist
+% determine the algebraic distance given a set of points and the center
+% point and radii of an elipsoid
+% *Inputs:* 
+%
+% _points_ (many*(2||3||6) double) x,y,z cartesian point
+%
+% _centerPoint_ (1 * 3 double) xc,yc,zc of an ellipsoid
+%
+% _radii_ (1 * 3 double) a,b,c of an ellipsoid
+%
+% *Returns:* 
+%
+% _algebraicDist_ (many*1 double) algebraic distance for the ellipsoid
+
+function algebraicDist = GetAlgebraicDist(points, centerPoint, radii)
+
+algebraicDist = ((points(:,1)-centerPoint(1))/radii(1)).^2 ...
+              + ((points(:,2)-centerPoint(2))/radii(2)).^2 ...
+              + ((points(:,3)-centerPoint(3))/radii(3)).^2;
+end
 
 
