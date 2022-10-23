@@ -55,11 +55,6 @@ totalBricks.brick{1}.base = eye(4)*transl(0.52, 0.5, 0);
 totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
 
 
-
-hold on
-
-% Load the LinearUR3 into the workspace
-
 %% Kuka joint ellipsoids
 clear all
 close all
