@@ -427,41 +427,55 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 % account for the gripper)
 
 pf = Portafilters(1);
-pf.portafilter{1}.base = eye(4)*transl(-0.7,-0.4, 0.8);
+coffeeCup = Cups(1);
 
-qToBrick1 = LinUr3.model.ikcon(totalBricks.brick{1}.base*transl(0,0,0.3)*trotx(pi));
-qToBrick2 = LinUr3.model.ikcon(totalBricks.brick{2}.base*transl(0,0,0.3)*trotx(pi));
+steps = 50;
+
+pf.portafilter{1}.base = eye(4)*transl(-0.7,-0.1, 0.85);
+pf.portafilter{1}.animate(pf.portafilter{1}.base);
 
 
-% calculate the corresponding the poses of each brick
-poseToBrick1 = kuka.model.fkine(qToBrick1);
-poseToBrick2 = kuka.model.fkine(qToBrick2);
+coffeeCup.cup{1}.base = eye(4)*transl(0,0.8,0.55);
+coffeeCup.cup{1}.animate(coffeeCup.cup{1}.base);
+
+% calculate the corresponding the poses of robot and portafiltertroty(pi)*trotz(-pi/2)
+qKukaStart = kuka.model.getpos;
+qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base);
+
+moveKukaToPf = jtraj(qKukaStart,qToPfStart, steps);
+
+
+poseAtPf = kuka.model.getpos;
+
+%poseToCoffeeGr = kuka.model.ikcon(eye(4)*transl(-0.9,0.92,0.65),qToPfStart);
+
+% Animate trajectory of robot from start to Brick1
+for i=1:1:steps
+    kuka.model.animate(moveKukaToPf(i,:));
+    pause(0.01)
+end
+
+
 
 
 % Find the end-effector joint configuration at initial joint states
-startkuka = kuka.model.fkine(zeros(8));
-qStartkuka = kuka.model.ikcon(startkuka);
 
 steps = 100; % for quintic polynomial method
 
 % Find trajectory of q from starting position to Portafilter
-startToB1 = jtraj(qStartkuka(1,:),qToPortafilter,steps);
+
 
 
 % Animate trajectory of robot from start to Brick1
-for i=1:1:steps
-    kuka.model.animate(startToB1(i,:))
-    pause(0.01)
-end
 
 % Animate trajectory of robot stacking Brick1
-for i=1:1:steps
-    kuka.model.animate(stackB1(i,:))
-    totalBricks.brick{1}.base = kuka.model.fkine(...
-        stackB1(i,:))
-    totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
-    pause(0.01)
-end
+% for i=1:1:steps
+%     kuka.model.animate(stackB1(i,:))
+%     totalBricks.brick{1}.base = kuka.model.fkine(...
+%         stackB1(i,:))
+%     totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
+%     pause(0.01)
+% end
 
 function dist=dist2pts(pt1,pt2)
 

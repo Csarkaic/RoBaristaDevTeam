@@ -6,6 +6,7 @@ clf
 
 kuka = Kuka;
 
+%% Projectile test and collision check (Light Curtain)
 % Spawn and set base position of foreign object (cup)
 totalCups = Cups(1);
 totalCups.cup{1}.base = eye(4)*transl(-1,0,1);
@@ -283,7 +284,7 @@ backCPoints = backCPoints + repmat([0,-2,-1.3],size(backCPoints,1),1);
 kukaPose = kuka.model.getpos;
 tr = kuka.model.fkine(kukaPose);
 
-% Concatenate all points into 1 array
+% Concatenate all environment points into 1 array
 allPoints = [backCPoints;
     coffeeDPoints;
     coffeeGrPoints;
@@ -301,7 +302,7 @@ algebraicDist = GetAlgebraicDist(allPointsUpdated, centerPoint, radii);
 pointsInside = find(algebraicDist < 0.05);
 display(['There are now ', num2str(size(pointsInside,1)),' points inside']);
 
-% 2.10
+
 q = [0,0,0,0,0,0,0]
 tr = zeros(4,4,kuka.model.n+1);
 tr(:,:,1) = kuka.model.base;
@@ -355,7 +356,7 @@ for q1 = qlim(1,1):steps:qlim(1,2)  % increment throught the joint limits of all
         end
     end
 end
-% 2.6 Plot3D model showing where the end effector can be over all points in the robot workspace.
+% Plot3D model showing where the end effector can be over all points in the robot workspace.
 plot3(pointCloud1(:,1),pointCloud1(:,2),pointCloud1(:,3),'r.');
 
 % Calculate the volume of the robot workspace
@@ -424,39 +425,57 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
-qToBrick1 = LinUr3.model.ikcon(totalBricks.brick{1}.base*transl(0,0,0.3)*trotx(pi));
-qToBrick2 = LinUr3.model.ikcon(totalBricks.brick{2}.base*transl(0,0,0.3)*trotx(pi));
+clear a
+pf = Portafilters(1);
+coffeeCup = Cups(1);
+
+steps = 50;
+
+pf.portafilter{1}.base = eye(4)*transl(-0.7,-0.1, 0.85);
+pf.portafilter{1}.animate(pf.portafilter{1}.base);
 
 
-% calculate the corresponding the poses of each brick
-poseToBrick1 = LinUr3.model.fkine(qToBrick1);
-poseToBrick2 = LinUr3.model.fkine(qToBrick2);
+coffeeCup.cup{1}.base = eye(4)*transl(0,0.8,0.55);
+coffeeCup.cup{1}.animate(coffeeCup.cup{1}.base);
+
+% calculate the corresponding the poses of robot and portafiltertroty(pi)*trotz(-pi/2)
+qKukaStart = kuka.model.getpos;
+qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base);
+
+moveKukaToPf = jtraj(qKukaStart,qToPfStart, steps);
 
 
-% Find the end-effector joint configuration at initial joint states
-startLinUr3 = LinUr3.model.fkine(zeros(8));
-qStartLinUr3 = LinUr3.model.ikcon(startLinUr3);
+poseAtPf = kuka.model.getpos;
 
-steps = 100; % for quintic polynomial method
-
-% Find trajectory of q from starting position to Brick1
-startToB1 = jtraj(qStartLinUr3(1,:),qToBrick1,steps);
-
+%poseToCoffeeGr = kuka.model.ikcon(eye(4)*transl(-0.9,0.92,0.65),qToPfStart);
 
 % Animate trajectory of robot from start to Brick1
 for i=1:1:steps
-    LinUr3.model.animate(startToB1(i,:))
+    kuka.model.animate(moveKukaToPf(i,:));
     pause(0.01)
 end
 
+
+
+
+% Find the end-effector joint configuration at initial joint states
+
+steps = 100; % for quintic polynomial method
+
+% Find trajectory of q from starting position to Portafilter
+
+
+
+% Animate trajectory of robot from start to Brick1
+
 % Animate trajectory of robot stacking Brick1
-for i=1:1:steps
-    LinUr3.model.animate(stackB1(i,:))
-    totalBricks.brick{1}.base = LinUr3.model.fkine(...
-        stackB1(i,:))
-    totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
-    pause(0.01)
-end
+% for i=1:1:steps
+%     kuka.model.animate(stackB1(i,:))
+%     totalBricks.brick{1}.base = kuka.model.fkine(...
+%         stackB1(i,:))
+%     totalBricks.brick{1}.animate(totalBricks.brick{1}.base)
+%     pause(0.01)
+% end
 
 function dist=dist2pts(pt1,pt2)
 
