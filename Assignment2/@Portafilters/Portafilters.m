@@ -49,7 +49,7 @@ classdef Portafilters < handle
             end
 
             axis equal
-            camlight;
+        
         end
         
         function delete(self)

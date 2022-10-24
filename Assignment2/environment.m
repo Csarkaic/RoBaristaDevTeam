@@ -145,8 +145,20 @@ classdef environment < handle
             %load the table through trisurf(triangular surface) reading and location
             fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
                 v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+
+
+
+            [f,v,data] = plyread('cup.ply', 'tri');
+            %Set the color variables for object file
+            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+            %set the location into the workspace using [x,y,z coordinates]
+            location_fencing = [0.27,1.25,0.55];
+            %load the table through trisurf(triangular surface) reading and location
+            fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
+                v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
                 'EdgeLighting','flat');
-            
+
+
             for i = 0.6:0.266:1.4
                 for j = 0.65:0.2:1.25
                     [f,v,data] = plyread('croissant.ply', 'tri');
