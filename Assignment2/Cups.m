@@ -31,7 +31,7 @@ classdef Cups < handle
             
             self.workspaceDimensions = [-self.paddockSize(1)/2, self.paddockSize(1)/2 ...
                                        ,-self.paddockSize(2)/2, self.paddockSize(2)/2 ...
-                                       ,-1.5,self.maxHeight];
+                                       ,-0.1,self.maxHeight];
 
             % Create the required number of Cups
             for i = 1:self.cupCount

@@ -425,7 +425,8 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
-
+clear all
+kuka = Kuka;
 pf = Portafilters(1);
 coffeeCup = Cups(1);
 
