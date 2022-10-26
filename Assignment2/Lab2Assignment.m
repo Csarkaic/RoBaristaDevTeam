@@ -437,30 +437,30 @@ pf.portafilter{1}.animate(pf.portafilter{1}.base);
 
 coffeeCup.cup{1}.base = eye(4)*transl(0,0.8,0.55);
 coffeeCup.cup{1}.animate(coffeeCup.cup{1}.base);
+pStart = eye(4)*transl(-0.5, 0.5, 1);
+
+kukaOrigin = eye(4)*transl(-0.7,0.45,1.21);
+kukaStPose = kuka.model.ikcon(kukaOrigin);
+kuka.model.animate(kukaStPose);
 
 % calculate the corresponding the poses of robot and portafiltertroty(pi)*trotz(-pi/2)
-qKukaStart = kuka.model.getpos;
+ %,[0,pi/2,0,pi/2,pi/2,0,pi/2]);
 qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base);
 
-moveKukaToPf = jtraj(qKukaStart,qToPfStart, steps);
+moveKukaToPf = lspb(kukaStPose,qToPfStart, steps);
 
-
-poseAtPf = kuka.model.getpos;
 
 %poseToCoffeeGr = kuka.model.ikcon(eye(4)*transl(-0.9,0.92,0.65),qToPfStart);
 
-% Animate trajectory of robot from start to Brick1
+% Animate trajectory of robot from start to portafilter
 for i=1:1:steps
     kuka.model.animate(moveKukaToPf(i,:));
     pause(0.01)
 end
 
 
-
-
 % Find the end-effector joint configuration at initial joint states
 
-steps = 100; % for quintic polynomial method
 
 % Find trajectory of q from starting position to Portafilter
 

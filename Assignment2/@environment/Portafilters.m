@@ -1,7 +1,7 @@
-classdef Portafilter < handle
-    %   Cups A way of creating Cups
-    %   The Cups can be moved around randomly. It is then possible to query
-    %   the current location (base) of the Cups.
+classdef Portafilters < handle
+    %   Portafilter A way of creating Portafilter
+    %   The Portafilter can be moved around randomly. It is then possible to query
+    %   the current location (base) of the Portafilter.
     
     properties (Constant)
         %> Max height is for plotting of the workspace
@@ -9,7 +9,7 @@ classdef Portafilter < handle
     end
     
     properties
-        %> Number of Portafilters
+        %> Number of Portafilter
         portafilterCount = 2;
         
         %> A cell structure of \c portafilterCount portafilter models
@@ -33,7 +33,7 @@ classdef Portafilter < handle
                                        ,-self.paddockSize(2)/2, self.paddockSize(2)/2 ...
                                        ,-1.5,self.maxHeight];
 
-            % Create the required number of Portafilters
+            % Create the required number of Portafilter
             for i = 1:self.portafilterCount
                 self.portafilter{i} = self.GetPortafilterModel(['portafilter',num2str(i)]);
                 % Random spawn
@@ -49,7 +49,7 @@ classdef Portafilter < handle
             end
 
             axis equal
-            camlight;
+        
         end
         
         function delete(self)
@@ -57,7 +57,7 @@ classdef Portafilter < handle
         end       
         
         %% PlotSingleRandomStep
-        % Move each of the Portafilters forward and rotate some rotate value around
+        % Move each of the Portafilter forward and rotate some rotate value around
         % the z axis
         function PlotSingleRandomStep(self)
             for portafilterIndex = 1:self.portafilterCount
@@ -102,7 +102,7 @@ classdef Portafilter < handle
             if nargin < 1
                 name = 'portafilter';
             end
-            [faceData,vertexData] = plyread('portafilter.ply','tri');
+            [faceData,vertexData] = plyread('portafilter.PLY','tri');
             L1 = Link('alpha',-pi/2,'a',0,'d',0.3,'offset',0); 
             model = SerialLink(L1,'name',name);
             model.faces = {faceData,[]};
