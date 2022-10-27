@@ -427,6 +427,8 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 % account for the gripper)
 
 % 
+
+kuka = Kuka;
 pf = Portafilters(1);
 pf.portafilter{1}.base = eye(4)*transl(-0.9,-0.1, 0.85);
 pf.portafilter{1}.animate(pf.portafilter{1}.base);
