@@ -61,7 +61,7 @@ classdef environment < handle
             %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
-            location_FINALgrinder = [-0.9,1.2,0.55];
+            location_FINALgrinder = [-0.9,1.05,0.55];
             %load the table through trisurf(triangular surface) reading and location
             FINALgrinder = trisurf(f, v(:,1)+location_FINALgrinder(1,1),v(:,2)+location_FINALgrinder(1,2),...
                 v(:,3)+location_FINALgrinder(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
@@ -71,7 +71,7 @@ classdef environment < handle
             %Set the color variables for object file
             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
             %set the location into the workspace using [x,y,z coordinates]
-            location_FINALtamper = [-0.65,1.2,0.55];
+            location_FINALtamper = [-0.65,1,0.55];
             %load the table through trisurf(triangular surface) reading and location
             FINALtamper = trisurf(f, v(:,1)+location_FINALtamper(1,1),v(:,2)+location_FINALtamper(1,2),...
                 v(:,3)+location_FINALtamper(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...

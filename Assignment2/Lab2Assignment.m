@@ -425,39 +425,112 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
-clear all
-kuka = Kuka;
+
+% 
 pf = Portafilters(1);
+pf.portafilter{1}.base = eye(4)*transl(-0.9,-0.1, 0.85);
+pf.portafilter{1}.animate(pf.portafilter{1}.base);
+
 coffeeCup = Cups(1);
+coffeeCup.cup{1}.base = eye(4)*transl(0,0.8,0.55);
+coffeeCup.cup{1}.animate(coffeeCup.cup{1}.base);
+
+view(90,45)
 
 steps = 50;
 
-pf.portafilter{1}.base = eye(4)*transl(-0.7,-0.1, 0.85);
-pf.portafilter{1}.animate(pf.portafilter{1}.base);
-
-
-coffeeCup.cup{1}.base = eye(4)*transl(0,0.8,0.55);
-coffeeCup.cup{1}.animate(coffeeCup.cup{1}.base);
-pStart = eye(4)*transl(-0.5, 0.5, 1);
-
-kukaOrigin = eye(4)*transl(-0.7,0.45,1.21);
-kukaStPose = kuka.model.ikcon(kukaOrigin);
+%
+kukaStPose = [0,0,0,0,0,0,0];
 kuka.model.animate(kukaStPose);
 
-% calculate the corresponding the poses of robot and portafiltertroty(pi)*trotz(-pi/2)
- %,[0,pi/2,0,pi/2,pi/2,0,pi/2]);
-qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base);
+qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base); 
+  
+% Calculate the corresponding the poses of robot and portafilter
+moveKukaToPf = jtraj(kukaStPose,qToPfStart, steps);
 
-moveKukaToPf = lspb(kukaStPose,qToPfStart, steps);
-
-
-%poseToCoffeeGr = kuka.model.ikcon(eye(4)*transl(-0.9,0.92,0.65),qToPfStart);
-
-% Animate trajectory of robot from start to portafilter
 for i=1:1:steps
     kuka.model.animate(moveKukaToPf(i,:));
     pause(0.01)
 end
+
+pInter = pf.portafilter{1}.base*transl(0,-0.1,0)*trotz(pi);
+qToInter = kuka.model.ikcon(pInter,[0,0,pi,0,pi/2,pi/2,0]);
+
+moveToInter = jtraj(kukaStPose,qToInter,steps);
+
+view(90,30)
+
+% Animate trajectory of robot from start to portafilter
+for i=1:1:steps
+    kuka.model.animate(moveToInter(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        moveToInter(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+
+% Create poses for intermediate point between the coffee machine and grinder
+pPfToGrinder = eye(4)*transl(-0.9,0.6,0.65)*trotz(pi);
+qMachineToGrinder = kuka.model.ikcon(pPfToGrinder,[0,0,pi,0,pi,0,0]);
+
+movePfToGrinder = jtraj(qToPfStart,qMachineToGrinder,steps);
+
+for i=1:1:steps
+    kuka.model.animate(movePfToGrinder(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        movePfToGrinder(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+
+pTamperInter = eye(4)*transl(-0.5,0.3,0.6)*trotz(pi);
+qToTamperInter = kuka.model.ikcon(pTamperInter,[0,0,pi,0,pi/2,pi/2,0]);
+
+movePfToTamperInter = jtraj(qMachineToGrinder,qToTamperInter,steps);
+
+view(90,30)
+
+% Animate trajectory of robot from start to portafilter
+for i=1:1:steps
+    kuka.model.animate(movePfToTamperInter(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        movePfToTamperInter(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+
+view(85,15)
+
+pTamper = eye(4)*transl(-0.66,0.6,0.52)*trotz(pi);
+qToTamper = kuka.model.ikcon(pTamper,[0,0,pi,0,0,pi,0]);
+
+moveToTamper = jtraj(qToTamperInter,qToTamper,steps);
+for i=1:1:steps
+    kuka.model.animate(moveToTamper(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        moveToTamper(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+% Animate trajectory of robot from start to portafilter
+for i=1:1:steps
+    kuka.model.animate(moveToTamper(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        moveToTamper(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+
+moveTamperToMachine = jtraj(qToTamper,qToPfStart,steps);
+
+for i=1:1:steps
+    kuka.model.animate(moveTamperToMachine(i,:));
+    pf.portafilter{1}.base = kuka.model.fkine(...
+        moveTamperToMachine(i,:));
+    pf.portafilter{1}.animate(pf.portafilter{1}.base);
+    pause(0.01)
+end
+
 
 
 % Find the end-effector joint configuration at initial joint states
