@@ -428,7 +428,6 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 
 % 
 
-kuka = Kuka;
 pf = Portafilters(1);
 pf.portafilter{1}.base = eye(4)*transl(-0.9,-0.1, 0.85);
 pf.portafilter{1}.animate(pf.portafilter{1}.base);
@@ -445,7 +444,7 @@ steps = 50;
 kukaStPose = [0,0,0,0,0,0,0];
 kuka.model.animate(kukaStPose);
 
-qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base); 
+qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base*trotz(pi/2)); 
   
 % Calculate the corresponding the poses of robot and portafilter
 moveKukaToPf = jtraj(kukaStPose,qToPfStart, steps);
@@ -455,21 +454,21 @@ for i=1:1:steps
     pause(0.01)
 end
 
-pInter = pf.portafilter{1}.base*transl(0,-0.1,0)*trotz(pi);
-qToInter = kuka.model.ikcon(pInter,[0,0,pi,0,pi/2,pi/2,0]);
-
-moveToInter = jtraj(kukaStPose,qToInter,steps);
+% pInter = pf.portafilter{1}.base*transl(0,-0.1,0)*trotz(pi);
+% qToInter = kuka.model.ikcon(pInter,[0,0,pi,0,pi/2,pi/2,0]);
+% 
+% moveToInter = jtraj(qToPfStart,qToInter,steps);
 
 view(90,30)
 
 % Animate trajectory of robot from start to portafilter
-for i=1:1:steps
-    kuka.model.animate(moveToInter(i,:));
-    pf.portafilter{1}.base = kuka.model.fkine(...
-        moveToInter(i,:));
-    pf.portafilter{1}.animate(pf.portafilter{1}.base);
-    pause(0.01)
-end
+% for i=1:1:steps
+%     kuka.model.animate(moveToInter(i,:));
+%     pf.portafilter{1}.base = kuka.model.fkine(...
+%         moveToInter(i,:));
+%     pf.portafilter{1}.animate(pf.portafilter{1}.base);
+%     pause(0.01)
+% end
 
 % Create poses for intermediate point between the coffee machine and grinder
 pPfToGrinder = eye(4)*transl(-0.9,0.6,0.65)*trotz(pi);
