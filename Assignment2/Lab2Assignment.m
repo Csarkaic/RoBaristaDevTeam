@@ -426,8 +426,8 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 % find robot joint angles for each object's position (offset is present to
 % account for the gripper)
 
-% 
-
+% write kuka = Kuka into cmd window
+kuka = Kuka;  
 pf = Portafilters(1);
 pf.portafilter{1}.base = eye(4)*transl(-0.9,-0.1, 0.85);
 pf.portafilter{1}.animate(pf.portafilter{1}.base);
@@ -444,7 +444,7 @@ steps = 50;
 kukaStPose = [0,0,0,0,0,0,0];
 kuka.model.animate(kukaStPose);
 
-qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base*trotz(pi/2)); 
+qToPfStart = kuka.model.ikcon(pf.portafilter{1}.base); %*trotz(pi/2)
   
 % Calculate the corresponding the poses of robot and portafilter
 moveKukaToPf = jtraj(kukaStPose,qToPfStart, steps);
@@ -483,9 +483,9 @@ for i=1:1:steps
     pf.portafilter{1}.animate(pf.portafilter{1}.base);
     pause(0.01)
 end
-
+pause(5);
 pTamperInter = eye(4)*transl(-0.5,0.3,0.6)*trotz(pi);
-qToTamperInter = kuka.model.ikcon(pTamperInter,[0,0,pi,0,pi/2,pi/2,0]);
+qToTamperInter = kuka.model.ikcon(pTamperInter,[0,0,pi,0,pi,pi/2,0]);
 
 movePfToTamperInter = jtraj(qMachineToGrinder,qToTamperInter,steps);
 
@@ -503,7 +503,7 @@ end
 view(85,15)
 
 pTamper = eye(4)*transl(-0.66,0.6,0.52)*trotz(pi);
-qToTamper = kuka.model.ikcon(pTamper,[0,0,pi,0,0,pi,0]);
+qToTamper = kuka.model.ikcon(pTamper,[0,0,2*pi,0,3*pi/4,3*pi/4,3*pi/4]);
 
 moveToTamper = jtraj(qToTamperInter,qToTamper,steps);
 for i=1:1:steps
@@ -513,16 +513,10 @@ for i=1:1:steps
     pf.portafilter{1}.animate(pf.portafilter{1}.base);
     pause(0.01)
 end
+pause(5);
 % Animate trajectory of robot from start to portafilter
-for i=1:1:steps
-    kuka.model.animate(moveToTamper(i,:));
-    pf.portafilter{1}.base = kuka.model.fkine(...
-        moveToTamper(i,:));
-    pf.portafilter{1}.animate(pf.portafilter{1}.base);
-    pause(0.01)
-end
-
 moveTamperToMachine = jtraj(qToTamper,qToPfStart,steps);
+
 
 for i=1:1:steps
     kuka.model.animate(moveTamperToMachine(i,:));
