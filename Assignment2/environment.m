@@ -264,10 +264,12 @@ classdef environment < handle
             qMatrix = zeros(steps, 7);
            
             
-            cuppa.cup{1}.base = cuppa.cup{1}.base * transl(2,3,1.2);
+            
             
             for i = 1:cuppa.cupCount
 %                 if matlab.ui.control.StateButton==0
+                    cuppa.cup{1}.base = transl(0.5,0.5,1.2);
+                    
                     T1 = inv((kukBot.model.base * transl(0,0,0.9)) * cuppa.cup{i}.base);
                     
                     goalQ = kukBot.model.ikcon(T1, qOpt);
@@ -275,9 +277,9 @@ classdef environment < handle
                     trajectory = lspb(0,1,steps);
                     
                     for j = 1:steps
-%                         if matlab.ui.control.StateButton==0
-                            qMatrix(j,:) = (1-trajectory(j))*startQ + trajectory(j)*goalQ;
-%                         end
+                        %                         if matlab.ui.control.StateButton==0
+                        qMatrix(j,:) = (1-trajectory(j))*startQ + trajectory(j)*goalQ;
+                        %                         end
                     end
                     for k = 1:steps
 %                         if matlab.ui.control.StateButton==0
@@ -291,9 +293,9 @@ classdef environment < handle
                             qMatrix(k,6) = q6;
                             kukBot.model.animate(qMatrix(k,:));
                             drawnow();
-%                         end
-                    end
-
+                        end
+%                     end
+                    
 %                 end
             end
             

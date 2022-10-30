@@ -15,7 +15,7 @@ cupQ1 = totalCups.cup{1}.base;
 
 projectileDetected = 0; % light curtain signal indicator
 
-for i=-1:0.05:3
+for i=-1:-0.05:-3
     
     cupQ1(1,4) = i;
     totalCups.cup{1}.base = cupQ1;
