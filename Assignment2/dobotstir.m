@@ -3,6 +3,13 @@ classdef dobotstir < handle
         function dobotStir
             dobot = DobotBarista;
             
+            dobotQStart = dobot.model.getpos;
+            dobotPose = dobot.model.fkine(dobotQStart);
+            dobotPose = dobotPose*transl(0,0,0.1);
+dobotQStart = dobot.model.ikcon(dobotPose, [0,0,0,pi,0]);
+dobot.model.animate(dobotQStart);
+
+           
             steps = 5;
             g = dobot.model.getpos;
             q = dobot.model.fkine(g);
@@ -16,7 +23,7 @@ classdef dobotstir < handle
                 pause(0.01)
             end
             for i = 1:1:5
-                if matlab.ui.control.StateButton==0
+                %if matlab.ui.control.StateButton==0
                     % q = dobot.model.getpos;
                     q = dobot.model.fkine(k);
                     f = q * transl(-0.02,-0.02,0);
@@ -29,7 +36,7 @@ classdef dobotstir < handle
                             dobot.model.animate(j(i,:))
                             pause(0.01)
                         end
-                    end
+                   % end
                     
                     q = dobot.model.fkine(l);
                     f = q * transl(0.02,-0.02,0);
@@ -38,10 +45,10 @@ classdef dobotstir < handle
                     j = jtraj(l,k,steps);
                     
                     for i = 1:1:steps
-                        if matlab.ui.control.StateButton==0
+                       % if matlab.ui.control.StateButton==0
                             dobot.model.animate(j(i,:))
                             pause(0.01)
-                        end
+                       % end
                     end
                     
                     q = dobot.model.fkine(k);
@@ -51,10 +58,10 @@ classdef dobotstir < handle
                     j = jtraj(k,l,steps);
                     
                     for i = 1:1:steps
-                        if matlab.ui.control.StateButton==0
+                       % if matlab.ui.control.StateButton==0
                             dobot.model.animate(j(i,:))
                             pause(0.01)
-                        end
+                       % end
                     end
                     
                     q = dobot.model.fkine(l);
@@ -64,10 +71,10 @@ classdef dobotstir < handle
                     j = jtraj(l,k,steps);
                     
                     for i = 1:1:steps
-                        if matlab.ui.control.StateButton==0
+                       % if matlab.ui.control.StateButton==0
                             dobot.model.animate(j(i,:))
                             pause(0.02)
-                        end
+                       % end
                     end
                 end
             end

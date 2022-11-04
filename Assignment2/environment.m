@@ -8,8 +8,8 @@ classdef environment < handle
         function spawnEnvironment
             hold on;
             
-            Kukbot = Kuka;
-            dobot = DobotBarista;
+            %Kukbot = Kuka;
+            %dobot = DobotBarista;
             
             %             q = dobot.model.getpos;
             %             f = dobot.model.fkine(q);
@@ -149,15 +149,15 @@ classdef environment < handle
 
 
 
-            [f,v,data] = plyread('cup.ply', 'tri');
-            %Set the color variables for object file
-            vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
-            %set the location into the workspace using [x,y,z coordinates]
-            location_fencing = [0.27,1.25,0.55];
-            %load the table through trisurf(triangular surface) reading and location
-            fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
-                v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
-                'EdgeLighting','flat');
+%             [f,v,data] = plyread('cup.ply', 'tri');
+%             %Set the color variables for object file
+%             vertexColours = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
+%             %set the location into the workspace using [x,y,z coordinates]
+%             location_fencing = [0.27,1.25,0.55];
+%             %load the table through trisurf(triangular surface) reading and location
+%             fencing = trisurf(f, v(:,1)+location_fencing(1,1),v(:,2)+location_fencing(1,2),...
+%                 v(:,3)+location_fencing(1,3),'FaceVertexCData',vertexColours,'EdgeColor','interp',...
+%                 'EdgeLighting','flat');
 
 
             for i = 0.6:0.266:1.4
