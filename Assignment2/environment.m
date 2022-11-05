@@ -8,13 +8,10 @@ classdef environment < handle
         function spawnEnvironment
             hold on;
             
-<<<<<<< HEAD
-            %Kukbot = Kuka;
-            %dobot = DobotBarista;
-=======
+
            % kuka = Kuka;
            % dobot = DobotBarista;
->>>>>>> e4714c0b292927eccd5482e2b9e8db0e2a88f874
+
             
             %             q = dobot.model.getpos;
             %             f = dobot.model.fkine(q);

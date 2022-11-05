@@ -425,7 +425,6 @@ V = (4/3)*pi*(xRadius*yRadius*zRadius)
 %% Move robot to pick up object
 % find robot joint angles for each object's position
 
-<<<<<<< HEAD
 kuka = Kuka;
 %dobot = DobotBarista;
 
@@ -435,10 +434,10 @@ kuka = Kuka;
 % dobotQStart = dobot.model.ikcon(dobotPose, [0,0,0,pi,0]);
 % dobot.model.animate(dobotQStart);
 
-=======
+
 % write kuka = Kuka into cmd window
 kuka = Kuka;  
->>>>>>> e4714c0b292927eccd5482e2b9e8db0e2a88f874
+
 pf = Portafilters(1);
 pf.portafilter{1}.base = eye(4)*transl(-0.9,-0.1, 0.85)*trotz(pi);
 pf.portafilter{1}.base = pf.portafilter{1}.base*trotz(pi);
@@ -476,7 +475,7 @@ qMachineToGrinder = kuka.model.ikcon(pPfToGrinder,[0,0,pi,0,pi,0,0]);
 
 movePfToGrinder = jtraj(qToPfStart,qMachineToGrinder,steps);
 
-<<<<<<< HEAD
+
 % for i=1:1:steps
 %     kuka.model.animate(movePfToGrinder(i,:));
 %     pf.portafilter{1}.base = kuka.model.fkine(...
@@ -485,7 +484,7 @@ movePfToGrinder = jtraj(qToPfStart,qMachineToGrinder,steps);
 %     pause(0.01)
 % end
 
-=======
+
 for i=1:1:steps
     kuka.model.animate(movePfToGrinder(i,:));
     pf.portafilter{1}.base = kuka.model.fkine(...
@@ -494,7 +493,7 @@ for i=1:1:steps
     pause(0.01)
 end
 pause(5);
->>>>>>> e4714c0b292927eccd5482e2b9e8db0e2a88f874
+
 pTamperInter = eye(4)*transl(-0.5,0.3,0.6)*trotz(pi);
 qToTamperInter = kuka.model.ikcon(pTamperInter,[0,0,pi,0,pi,pi/2,0]);
 
@@ -517,7 +516,7 @@ pTamper = eye(4)*transl(-0.66,0.6,0.52)*trotz(pi);
 qToTamper = kuka.model.ikcon(pTamper,[0,0,2*pi,0,3*pi/4,3*pi/4,3*pi/4]);
 
 moveToTamper = jtraj(qToTamperInter,qToTamper,steps);
-<<<<<<< HEAD
+
 % for i=1:1:steps
 %     kuka.model.animate(moveToTamper(i,:));
 %     pf.portafilter{1}.base = kuka.model.fkine(...
@@ -544,7 +543,7 @@ moveTamperToMachine = jtraj(qToTamper,qToPfStart,steps);
 %     pf.portafilter{1}.animate(pf.portafilter{1}.base);
 %     pause(0.01)
 % end
-=======
+
 for i=1:1:steps
     kuka.model.animate(moveToTamper(i,:));
     pf.portafilter{1}.base = kuka.model.fkine(...
@@ -564,7 +563,6 @@ for i=1:1:steps
     pf.portafilter{1}.animate(pf.portafilter{1}.base);
     pause(0.01)
 end
->>>>>>> e4714c0b292927eccd5482e2b9e8db0e2a88f874
 
 cupOffset = transl(0,-0.07,0.06)*troty(-pi/2)...
     *trotx(-pi/2);
