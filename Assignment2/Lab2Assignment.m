@@ -586,11 +586,12 @@ for i=1:1:steps
 end
 
 qLocks = kuka.model.getpos;
-%%
+
+% Move coffee (in cup) to intermediate point
 coffeeInter = eye(4)*transl(-0.9,0.2,cupOrigin(3,4))*troty(-pi/2)*trotx(pi/2);
 qCoffeeInter = kuka.model.ikcon(coffeeInter,qLocks);
 moveCoffeeInter = jtraj(qCupToMachine,qCoffeeInter,2*steps);
-%%
+
 for i=1:1:2*steps
     kuka.model.animate(moveCoffeeInter(i,:));
     coffeeCup.cup{1}.base = kuka.model.fkine(...
@@ -612,9 +613,10 @@ for i=1:1:2*steps
     pause(0.01)
 end
 
-qLocks3 = kuka.model.getpos;
-%%
-cupOrigin2 = cupOrigin*transl(0,-0.1,0.1)*troty(-pi/2)*trotx(-pi/2);
+qLocks3 = kuka.model.getpos; % Store joint configuration for ikcon in next trajectory
+
+% Find 
+cupOrigin2 = cupOrigin*transl(0,-0.1,0.1)*troty(-pi/2)*trotx(-pi/2); % 
 
 qCupOrigin = kuka.model.ikcon(cupOrigin2,[0,qLocks3(1,2),0,qLocks3(1,4),-pi/8,2*pi,qLocks3(1,7)]);
 moveCoffeeToDobot = jtraj(qCoffeeInter2,qCupOrigin,2*steps);
