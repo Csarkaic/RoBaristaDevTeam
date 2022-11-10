@@ -590,11 +590,6 @@ for i=1:1:2*steps
     pause(0.01)
 end
 %%
-
-dobotStart = dobot.model.getpos;
-qDobotStir = dobot.model.ikcon(transl(0,-0.2,0.25));
-
-
 function dist=dist2pts(pt1,pt2)
 
 %% Calculate distance (dist) between consecutive points
