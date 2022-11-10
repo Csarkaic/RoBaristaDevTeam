@@ -449,6 +449,7 @@ view(90,45)
 
 steps = 50;
 
+%
 kukaStPose = [0,0,0,0,0,0,0];
 kuka.model.animate(kukaStPose);
 
@@ -516,6 +517,7 @@ pause(5);
 
 % Animate trajectory of robot from start to portafilter
 moveTamperToMachine = jtraj(qToTamper,qToPfStart,steps);
+
 
 for i=1:1:steps
     kuka.model.animate(moveTamperToMachine(i,:));
